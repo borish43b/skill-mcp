@@ -1,0 +1,14 @@
+[project]
+name = "skill-mcp"
+version = "1.0.0"
+description = "Lightweight MCP server that serves SKILL.md skill documents"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=2.3,<3",
+    # direct imports, pinned transitively via mcp
+    "starlette",
+    "uvicorn",
+]
+
+[tool.uv]
+package = false
