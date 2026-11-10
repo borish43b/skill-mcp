@@ -88,7 +88,7 @@ Example client config (Claude Desktop / Claude Code style):
 ### Try it
 
 ```sh
-uv run mcp dev server.py -- --skills-dir skills
+uv run server.py -- --skills-dir skills
 ```
 
 This launches the MCP Inspector in a browser; pick `list_skills` or
