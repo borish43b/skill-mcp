@@ -85,15 +85,6 @@ Example client config (Claude Desktop / Claude Code style):
 }
 ```
 
-### Try it
-
-```sh
-uv run server.py --skills-dir skills
-```
-
-This launches the MCP Inspector in a browser; pick `list_skills` or
-`get_skill` under the **Tools** tab. (`mcp dev` needs `npx` on `PATH`.)
-
 ## Notes
 
 - Skills are read fresh on every call, so you can add, edit, or remove skill
