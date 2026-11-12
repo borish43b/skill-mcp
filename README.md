@@ -3,12 +3,14 @@
 A small, lightweight MCP (Model Context Protocol) server in Python that serves
 `SKILL.md` skill documents to a tool-capable LLM.
 
-It exposes two tools:
+It exposes four tools:
 
 | Tool | Description |
 | ---- | ----------- |
 | `list_skills` | Returns a mapping of available skill name → one-line description. |
-| `get_skill(name)` | Returns the full `SKILL.md` content of a skill by name. |
+| `get_skill(name)` | Returns the skill's `SKILL.md` content, plus the content of every file in the skill's `agents/` folder. |
+| `list_skill_files(name)` | Lists the skill's other files as paths relative to the skill folder (`SKILL.md` and `agents/` are omitted — `get_skill` already returns them). |
+| `read_skill_file(name, path)` | Reads one skill file by path relative to the skill folder, e.g. `references/base-en.txt`. |
 
 ## Layout
 
@@ -23,8 +25,23 @@ Skills are organized as one subfolder per skill:
 ```
 
 A skill is a folder that contains a `SKILL.md` file (a lowercase `skill.md` is
-also accepted on case-insensitive file systems). Any other file or folder is
-ignored.
+also accepted on case-insensitive file systems). Files besides `SKILL.md`
+(such as `references/` documents or `agents/` metadata) are served to the LLM
+through `list_skill_files` / `read_skill_file`, and files under `agents/` are
+inlined into the `get_skill` result.
+
+Example skill with support files:
+
+```
+<skills-dir>/
+  h3-prompt-writing/
+    SKILL.md
+    agents/
+      openai.yaml
+    references/
+      base-en.txt
+      ref-en.txt
+```
 
 ## Install
 
@@ -87,17 +104,30 @@ Example client config (Claude Desktop / Claude Code style):
 
 ### Try it
 
+In one terminal, start the server:
+
 ```sh
-uv run mcp dev server.py -- --skills-dir skills
+uv run server.py --skills-dir skills
 ```
 
-This launches the MCP Inspector in a browser; pick `list_skills` or
-`get_skill` under the **Tools** tab. (`mcp dev` needs `npx` on `PATH`.)
+In another, open the [MCP Inspector](https://github.com/modelcontextprotocol/inspector)
+pointed at the streamable HTTP endpoint:
+
+```sh
+npx @modelcontextprotocol/inspector --transport http --server-url http://127.0.0.1:8080/mcp
+```
+
+The Inspector's web UI opens in a browser; pick `list_skills`, `get_skill`,
+`list_skill_files`, or `read_skill_file` under the **Tools** tab and run it.
+(`npx` needs to be on `PATH`.)
 
 ## Notes
 
 - Skills are read fresh on every call, so you can add, edit, or remove skill
   folders while the server is running — no restart needed.
 - Unknown skill names return an error listing the available skills.
+- `read_skill_file` is scoped to the named skill's folder: paths must be
+  relative to it (e.g. `references/base-en.txt`), and anything that would
+  escape the folder (e.g. `../other-skill/SKILL.md`) is rejected.
 - The server binds `127.0.0.1` by default (localhost only). Pass `--host` to
   reach it from elsewhere; there is no authentication, so keep that in mind.
