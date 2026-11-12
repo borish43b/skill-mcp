@@ -102,25 +102,6 @@ Example client config (Claude Desktop / Claude Code style):
 }
 ```
 
-### Try it
-
-In one terminal, start the server:
-
-```sh
-uv run server.py --skills-dir skills
-```
-
-In another, open the [MCP Inspector](https://github.com/modelcontextprotocol/inspector)
-pointed at the streamable HTTP endpoint:
-
-```sh
-npx @modelcontextprotocol/inspector --transport http --server-url http://127.0.0.1:8080/mcp
-```
-
-The Inspector's web UI opens in a browser; pick `list_skills`, `get_skill`,
-`list_skill_files`, or `read_skill_file` under the **Tools** tab and run it.
-(`npx` needs to be on `PATH`.)
-
 ## Notes
 
 - Skills are read fresh on every call, so you can add, edit, or remove skill
